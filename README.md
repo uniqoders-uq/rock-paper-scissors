@@ -31,6 +31,26 @@ La tarea consiste en programar el juego <<piedra, papel o tijera>> teniendo en c
 | Jugador 1 | 1              | 1                | 3               |
 | Jugador 2 | 3              | 1                | 1               |
 
+### Instrucciones :
+Podrás usar tu entorno favorito para ejecutar en consola la aplicación, nosotros usamos (Linux o Windows + WSL2) + Docker
+
+1. Como ejecutar el juego: ``php console game [name]``
+2. Como ejecutar el test ``vendor/bin/phpunit .``
+
+Nos gustaría tener un código reutilizable y mantenible, por lo que queremos refactorizarlo siguiendo los principios de:
+
+* POO (Programación Orientada a Objetos) -> **IMPRESCINDIBLE**
+* Código limpio
+* Principios SÓLIDOS
+* Desacoplamiento
+* Patrones de diseño
+* Manejo de errores
+* Unit Testing
+* TDD
+* Arquitectura hexagonal
+
+No  es necesario implementarlos todos, pero deberás mejorar el código actual.
+
 ### 🚩 Condiciones :
 
 1. Deberá responder a las siguientes preguntas al finalizar la prueba:
@@ -38,16 +58,9 @@ La tarea consiste en programar el juego <<piedra, papel o tijera>> teniendo en c
    2. ¿Como los resolviste? 
    3. ¿Por qué lo hiciste de esta manera? 
 2. **Solo** se podrá desarrollar en **PHP y consola** 
-3. El código deberá implementar buenas prácticas (como POO, patrones de diseño o código limpio y comentado)
+3. El código deberá implementar buenas prácticas, siendo **IMPRESCINDIBLE la POO (Programación Orientada a Objetos)**
 4. El código deberá ser extensible en el futuro (cambiar el número de rondas máximas, agregar nuevas reglas…)
-5. El desarrollo deberá implementar Testing Unitario
+5. El desarrollo debería implementar Testing Unitario
 6. **Puntos extras**: Nuestro CTO le encanta la serie **The Big Bang Theory** y nos ha dicho que le encantaría 
 jugar a **Piedra, papel, tijera, lagarto, spock**  
-
-### Instrucciones :
-Podrás usar tu entorno favorito para ejecutar en consola la aplicación, nosotros usamos (Linux o Windows + WSL2) + Docker
-
-1. Como ejecutar el juego: ``php console game [name]``
-2. Como ejecutar el test ``vendor/bin/phpunit .``
-
 
