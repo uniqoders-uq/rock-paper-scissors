@@ -64,6 +64,7 @@ class GameCommand extends Command
 
         $round = 1;
         $max_round = 5;
+        $no_return = intval($max_round / 2) + 1;
 
         $ask = $this->getHelper('question');
 
@@ -93,12 +94,21 @@ class GameCommand extends Command
             } else {
                 $players['player']['stats']['draw']++;
                 $players['computer']['stats']['draw']++;
+                $no_return = intval(($max_round - $players['computer']['stats']['draw']) / 2) + 1;
+
 
                 $output->writeln('Draw!');
             }
+            if ($players['computer']['stats']['victory'] >= $no_return || $players['player']['stats']['victory'] >= $no_return) {
+                break;
+            }
 
             $round++;
-        } while ($round <= $max_round);
+        } while (
+            $round <= $max_round
+            && ($players['computer']['stats']['victory'] >= $no_return
+                || $players['player']['stats']['victory'] >= $no_return) == false
+        );
 
         // Display stats
         $stats = $players;
