@@ -2,6 +2,8 @@
 
 namespace Uniqoders\Tests\Unit\Console;
 
+use Uniqoders\Game\Console\Player;
+use Uniqoders\Game\Console\Contracts\PlayerInterface;
 use Uniqoders\Tests\Unit\UnitTestCase;
 
 class MakeDrinkCommandTest extends UnitTestCase
@@ -15,4 +17,5 @@ class MakeDrinkCommandTest extends UnitTestCase
     {
         $this->assertTrue(true);
     }
+    
 }
