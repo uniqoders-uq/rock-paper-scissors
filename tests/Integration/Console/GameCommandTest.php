@@ -30,6 +30,7 @@ class GameCommandTest extends IntegrationTestCase
         ]);
 
         $output = $commandTester->getDisplay();
-        $this->assertSame([], $output);
+        //$this->assertSame('', $output);
+        $this->assertStringContainsString('---+---',$output);
     }
 }

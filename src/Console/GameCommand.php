@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Uniqoders\Game\Contracts\CoreGameInterface;
+use Uniqoders\Game\Contracts\GameModeInterface;
 use Uniqoders\Game\Contracts\RoundInterface;
 
 class GameCommand extends Command implements CoreGameInterface
@@ -29,6 +30,11 @@ class GameCommand extends Command implements CoreGameInterface
     private InputInterface $input;
     private $output;
     private mixed $ask;
+    private $gamemodes = [
+        0 => 'Classic',
+        1 => 'Plus Spock Lizard'
+    ];
+    private GameModeInterface $gameMode;
 
 
     protected function configure()
@@ -48,30 +54,42 @@ class GameCommand extends Command implements CoreGameInterface
         ];
         return $this;
     }
-    public function setRules()
+    public function setGameMode()
     {
-        $this->rules = [
-            0 => [2],
-            1 => [0],
-            2 => [1]
-        ];
+        // Choose Game Mode
+        $this->ask = $this->getHelper('question');
+        $question0 = new ChoiceQuestion('Game Mode', array_values($this->gamemodes), 1);
+        $question0->setErrorMessage('Mode %s is invalid.');
+        $gameMode = $this->ask->ask($this->input, $this->output, $question0);
+        $this->output->writeln('Game Mode: ' . $gameMode);
+        $this->gameMode = (array_search($gameMode, $this->gamemodes) == 0) ? new ClassicMode : new SpockLizardMode;
+        return $this;
+    }
+    public function setRules(GameModeInterface $gameMode)
+    {
+        /**
+         * Can Set rules from an outside GameModeInterface 
+         */
+        $this->rules = $gameMode->getRules();
         $this->round = 1;
-        $this->max_round = 5;
+        $this->max_round = $gameMode->getRounds();
+        // $no_return var: This ensure game to stop when looser has not more opportunities for win or draw
         $this->no_return = intval($this->max_round / 2) + 1;
         return $this;
     }
     public function setWeapons()
     {
-        $this->weapons =  [
-            0 => 'Scissors',
-            1 => 'Rock',
-            2 => 'Paper'
-        ];
+        /**
+         * Set which weapons can use player
+         */
+        $this->weapons =  $this->gameMode->getWeapons();
         return $this;
     }
     public function play()
     {
-        $this->ask = $this->getHelper('question');
+        /**
+         * This are the rounds played during the game
+         */
         $fireRound = new Round($this->player1, $this->player2);
         $fireRound->setRules($this->rules);
         do {
@@ -90,7 +108,15 @@ class GameCommand extends Command implements CoreGameInterface
 
             $resultRound = $fireRound->fireRound();
             if ($resultRound === null) {
-                $this->no_return = intval(($this->max_round - $this->players['player']->stats->getStat('draw')) / 2) + 1;
+                /**
+                 * When draw:
+                 * $no_return var: This ensure game to end when looser has not more opportunities for win or draw, 
+                 * and avoid non-sense rounds
+                 * This var is affected by each draw, so it need to be recalculated
+                 * 
+                 */
+
+                $this->no_return = intval(($this->max_round - $this->player1->stats->getStat('draw')) / 2) + 1;
 
                 $this->output->writeln('Draw!');
             } else {
@@ -135,18 +161,22 @@ class GameCommand extends Command implements CoreGameInterface
         $table->render();
     }
 
-
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->write(PHP_EOL . 'Made with ♥ by Uniqoders.' . PHP_EOL . PHP_EOL);
         $this->input = $input;
         $this->output = $output;
         $this->playerName = $input->getArgument('name');
+        // Choose Game Mode
+        $this->setGameMode();
 
+        // Override Rounds
+        //$this->gameMode->setRounds(5);
+
+        // Go for game
         $this
             ->setPlayers()
-            ->setRules()
+            ->setRules($this->gameMode)
             ->setWeapons()
             ->play()
             ->showResults();
